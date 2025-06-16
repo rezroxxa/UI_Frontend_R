@@ -2,35 +2,38 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 import boardImage from "./board.png"; // Make sure board.png is inside src folder
 
+// ✅ Moved outside to avoid ESLint warning
+const passQuotes = [
+  "Success is no accident.",
+  "You did the work, now enjoy the result!",
+  "Great job, future star!"
+];
+
+const failQuotes = [
+  "Failure is the stepping stone to success.",
+  "Try harder next time!",
+  "Every mistake is a lesson."
+];
+
 function App() {
   const [name, setName] = useState("");
-  const [attendance, setAttendance] = useState("80");
-  const [participation, setParticipation] = useState("6");
-  const [studyHours, setStudyHours] = useState("10");
-  const [sleepHours, setSleepHours] = useState("7");
+  const [attendance, setAttendance] = useState("");
+  const [participation, setParticipation] = useState("");
+  const [studyHours, setStudyHours] = useState("");
+  const [sleepHours, setSleepHours] = useState("");
   const [prediction, setPrediction] = useState(null);
   const [quote, setQuote] = useState("");
 
-  const passQuotes = [
-    "Success is no accident.",
-    "You did the work, now enjoy the result!",
-    "Great job, future star!"
-  ];
-  const failQuotes = [
-    "Failure is the stepping stone to success.",
-    "Try harder next time!",
-    "Every mistake is a lesson."
-  ];
-
   useEffect(() => {
-    const quotes = prediction === "Pass" ? passQuotes : failQuotes;
+    if (!prediction) return;
 
+    const quotes = prediction === "Pass" ? passQuotes : failQuotes;
     const interval = setInterval(() => {
       setQuote(quotes[Math.floor(Math.random() * quotes.length)]);
     }, 10000);
 
     return () => clearInterval(interval);
-  }, [prediction, passQuotes, failQuotes]);
+  }, [prediction]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -56,6 +59,16 @@ function App() {
     }
   };
 
+  const handleReset = () => {
+    setName("");
+    setAttendance("");
+    setParticipation("");
+    setStudyHours("");
+    setSleepHours("");
+    setPrediction(null);
+    setQuote("");
+  };
+
   return (
     <div
       className="app"
@@ -68,7 +81,7 @@ function App() {
     >
       {/* Input Section (left side) */}
       <div className="input-section">
-        <h2>Student Predictor</h2>
+        <h2>Student Performance Result Predictor</h2>
         <form onSubmit={handleSubmit}>
           <input
             type="text"
@@ -77,8 +90,10 @@ function App() {
             onChange={(e) => setName(e.target.value)}
             required
           />
+
           <label>Attendance (%)</label>
-          <select value={attendance} onChange={(e) => setAttendance(e.target.value)}>
+          <select value={attendance} onChange={(e) => setAttendance(e.target.value)} required>
+            <option value="">-- Select --</option>
             <option value="60">60</option>
             <option value="75">75</option>
             <option value="80">80</option>
@@ -87,32 +102,40 @@ function App() {
           </select>
 
           <label>Participation Score</label>
-          <select value={participation} onChange={(e) => setParticipation(e.target.value)}>
+          <select value={participation} onChange={(e) => setParticipation(e.target.value)} required>
+            <option value="">-- Select --</option>
             <option value="2">2</option>
-            <option value="5">5</option>
+            <option value="4">4</option>
             <option value="6">6</option>
             <option value="8">8</option>
             <option value="10">10</option>
           </select>
 
           <label>Study Hours per Week</label>
-          <select value={studyHours} onChange={(e) => setStudyHours(e.target.value)}>
-            <option value="2">2</option>
-            <option value="5">5</option>
-            <option value="7">7</option>
-            <option value="10">10</option>
-            <option value="15">15</option>
+          <select value={studyHours} onChange={(e) => setStudyHours(e.target.value)} required>
+            <option value="">-- Select --</option>
+            {[...Array(9)].map((_, i) => {
+              const hour = i * 2;
+              return <option key={hour} value={hour}>{hour}</option>;
+            })}
           </select>
 
           <label>Sleep Hours per Night</label>
-          <select value={sleepHours} onChange={(e) => setSleepHours(e.target.value)}>
-            <option value="4">4</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
+          <select value={sleepHours} onChange={(e) => setSleepHours(e.target.value)} required>
+            <option value="">-- Select --</option>
+            {[...Array(11)].map((_, i) => (
+              <option key={i} value={i}>{i}</option>
+            ))}
           </select>
 
           <button type="submit">Predict</button>
+
+          {/* Show Try Again only after a prediction */}
+          {prediction && (
+            <button type="button" className="try-again-button" onClick={handleReset}>
+              Try Again
+            </button>
+          )}
         </form>
       </div>
 

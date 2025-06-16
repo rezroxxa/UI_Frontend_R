@@ -71,6 +71,26 @@
   /* No background so image shows behind */
 }
 
+.try-again-button {
+  padding: 12px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.try-again-button:hover {
+  background-color: #45a049;
+}
+
+
+
+
 .result-section h2 {
   font-size: 2.4rem;
   margin: 0;
